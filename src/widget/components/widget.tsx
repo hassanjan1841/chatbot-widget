@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { WidgetContext } from '../lib/context';
-import { ChatView } from './ChatView';
+import ChatView from './ChatView';
 
 // A simple gear icon SVG as a string
 const GearIcon = () => (

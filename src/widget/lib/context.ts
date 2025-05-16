@@ -1,6 +1,6 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 
-interface WidgetContextType {
+export interface WidgetContextType {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   clientKey: string;

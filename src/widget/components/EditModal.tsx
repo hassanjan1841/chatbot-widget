@@ -1,10 +1,12 @@
 import { useContext } from 'react';
 import { WidgetContext } from '../lib/context';
+import { StyleContext } from '../lib/StyleContext';
 import { StyleEditor } from './StyleEditor';
 import { Widget } from './widget'; // To show a preview
 
 export function EditModal() {
   const { isEditModalOpen, setIsEditModalOpen } = useContext(WidgetContext);
+  const { styles } = useContext(StyleContext);
 
   if (!isEditModalOpen) {
     return null;
@@ -40,7 +42,7 @@ export function EditModal() {
           >
             Live Preview
           </p>
-          <Widget />
+          <Widget widgetTitle={styles.widgetTitle} />
         </div>
       </div>
     </div>

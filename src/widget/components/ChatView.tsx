@@ -1,8 +1,10 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { WidgetContext } from '../lib/context';
+// import React, { useState, useContext, useEffect, useCallback } from 'react'; // React might not be needed if using new JSX transform
+import { useState, useEffect, useCallback } from 'react'; // Removed unused useContext
 // We will temporarily comment out getBotResponse as we are using a local demo flow
 // import { getBotResponse } from '../services/api';
-import { demoConversationFlow, FlowNode, FlowOption } from '../lib/demo-flow'; // Import demo flow
+import { demoConversationFlow, FlowNode, FlowOption } from '../lib/demo-flow'; // Corrected path
+// import { WidgetContext, WidgetContextType } from '../lib/context'; // WidgetContext not used directly in ChatView
+// import { StyleContext } from '../lib/StyleContext'; // Corrected path, still commented out
 
 interface Message {
   id: string;
@@ -11,16 +13,16 @@ interface Message {
   options?: FlowOption[]; // For rendering options as part of a bot message
 }
 
-export function ChatView() {
-  const { clientKey } = useContext(WidgetContext);
+const ChatView: React.FC = () => {
+  // const { setIsOpen } = useContext(WidgetContext) as WidgetContextType; // setIsOpen is unused in ChatView
+  // const { clientKey } = useContext(WidgetContext); // clientKey from WidgetContext is not used in the demo flow
+  // const { styles } = useContext(StyleContext); // ChatView relies on CSS variables set by WidgetContainer from StyleContext, so direct access to styles object is not needed here.
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  // State for managing the conversation flow
-  const [currentFlow, setCurrentFlow] = useState(demoConversationFlow);
-  const [currentNodeId, setCurrentNodeId] = useState<string>(
-    currentFlow.startNodeId,
+  const [currentNodeId, setCurrentNodeId] = useState<string | null>(
+    demoConversationFlow.startNodeId,
   );
 
   const addMessage = useCallback(
@@ -43,7 +45,8 @@ export function ChatView() {
       // Simulate bot thinking time
       setTimeout(() => {
         if (Array.isArray(node.botMessage)) {
-          node.botMessage.forEach((msg, index) => {
+          node.botMessage.forEach((msg: string, index: number) => {
+            // Added types for msg and index
             // Add options only to the last message in a sequence
             const msgOptions =
               index === node.botMessage.length - 1 &&
@@ -70,11 +73,13 @@ export function ChatView() {
 
   // Effect to display the first message(s) from the flow when component mounts or flow changes
   useEffect(() => {
-    const initialNode = currentFlow.nodes[currentFlow.startNodeId];
+    const initialNode =
+      demoConversationFlow.nodes[demoConversationFlow.startNodeId];
     if (initialNode) {
       addBotMessages(initialNode);
     }
-  }, [currentFlow, addBotMessages]); // Removed addMessage if it's stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addBotMessages]); // demoConversationFlow.startNodeId, demoConversationFlow.nodes are stable
 
   const handleOptionClick = useCallback(
     (option: FlowOption) => {
@@ -87,15 +92,16 @@ export function ChatView() {
         setTimeout(() => addMessage(answerText, 'bot'), 300);
         // After a direct answer, we might want to go to a generic node or end,
         // for now, we can go back to main menu or an end node if specified
-        const thankYouNode = Object.values(currentFlow.nodes).find(
-          (n) => n.nodeType === 'end_conversation',
+        const thankYouNode = Object.values(demoConversationFlow.nodes).find(
+          (n: any) => n.nodeType === 'end_conversation', // Typed n as any for now, ideally FlowNode
         );
         if (thankYouNode && answerText.includes('signup')) {
           // Use the new const here
           setTimeout(() => addBotMessages(thankYouNode), 600);
         } else {
           // Or present options to go back to main menu
-          const mainMenuNode = currentFlow.nodes[currentFlow.startNodeId];
+          const mainMenuNode =
+            demoConversationFlow.nodes[demoConversationFlow.startNodeId];
           if (mainMenuNode && mainMenuNode.options) {
             setTimeout(
               () =>
@@ -109,7 +115,7 @@ export function ChatView() {
           }
         }
       } else if (option.nextNodeId) {
-        const nextNode = currentFlow.nodes[option.nextNodeId];
+        const nextNode = demoConversationFlow.nodes[option.nextNodeId];
         if (nextNode) {
           setCurrentNodeId(option.nextNodeId);
           addBotMessages(nextNode);
@@ -121,7 +127,13 @@ export function ChatView() {
         }
       }
     },
-    [addMessage, currentFlow.nodes, currentFlow.startNodeId, addBotMessages],
+    [
+      addMessage,
+      // demoConversationFlow.nodes, // Considered stable
+      // demoConversationFlow.startNodeId, // Considered stable
+      addBotMessages, // Include addBotMessages as it's used inside
+      // setCurrentNodeId // Include if state updates based on it are critical for re-render, but usually not for useCallback itself
+    ],
   );
 
   // Original handleSendMessage for text input - can be enhanced later or disabled for pure flow demo
@@ -141,13 +153,23 @@ export function ChatView() {
       );
 
       // Second part: Re-show current node's prompt and options
-      const currentNode = currentFlow.nodes[currentNodeId];
-      if (currentNode) {
-        // addBotMessages will handle its own isLoading state changes and delays
-        addBotMessages(currentNode);
+      // Ensure currentNodeId is not null before accessing nodes
+      if (currentNodeId) {
+        const currentNode = demoConversationFlow.nodes[currentNodeId];
+        if (currentNode) {
+          // addBotMessages will handle its own isLoading state changes and delays
+          addBotMessages(currentNode);
+        } else {
+          // If no current node for some reason, ensure isLoading is reset
+          setIsLoading(false);
+          addMessage(
+            `Error: Could not find current node with ID: ${currentNodeId}`,
+            'bot',
+          );
+        }
       } else {
-        // If no current node for some reason, ensure isLoading is reset
         setIsLoading(false);
+        addMessage('Error: Current node ID is null.', 'bot');
       }
     }, 500); // Delay for "You said..." message
   };
@@ -168,10 +190,10 @@ export function ChatView() {
                     style={{
                       margin: '5px',
                       padding: '8px 12px',
-                      border: '1px solid var(--widget-primary-color)',
+                      border: '1px solid var(--widget-primary-color)', // Reverted to simple CSS var
                       borderRadius: '15px',
                       background: 'white',
-                      color: 'var(--widget-primary-color)',
+                      color: 'var(--widget-primary-color)', // Reverted to simple CSS var
                       cursor: 'pointer',
                     }}
                   >
@@ -207,4 +229,6 @@ export function ChatView() {
       </div>
     </div>
   );
-}
+};
+
+export default ChatView;
