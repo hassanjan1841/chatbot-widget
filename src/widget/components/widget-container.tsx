@@ -93,7 +93,7 @@ export function WidgetContainer({ clientKey }: WidgetContainerProps) {
           setIsEditModalOpen,
         }}
       >
-        <Widget />
+        <Widget widgetTitle={styles.widgetTitle} />
         <EditModal />
       </WidgetContext.Provider>
     </StyleContext.Provider>

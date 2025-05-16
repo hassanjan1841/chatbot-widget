@@ -51,7 +51,7 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 350px; /* Initial width */
+  width: 380px; /* Initial width */
   height: 500px; /* Initial height */
   max-height: 90vh; /* Previous max-height, can be adjusted */
   background-color: var(--widget-background-color);

@@ -15,34 +15,47 @@ const createLabel = (key: string) => {
 export function StyleEditor({}: StyleEditorProps) {
   const { styles, updateStyle, resetStyles } = useContext(StyleContext);
 
-  const handleColorChange = (key: keyof ChatbotStyles, value: string) => {
+  const handleInputChange = (key: keyof ChatbotStyles, value: string) => {
     updateStyle(key, value);
   };
 
   // Filter out keys that are not direct color strings or relevant style properties for direct editing
   // For example, widgetPrimaryColorRgb is derived and should not be directly edited.
-  const editableStyleKeys = Object.keys(styles).filter(
-    (key) => !key.endsWith('Rgb'),
+  // We will also handle widgetTitle separately.
+  const editableColorStyleKeys = Object.keys(styles).filter(
+    (key) => !key.endsWith('Rgb') && key !== 'widgetTitle',
   ) as Array<keyof ChatbotStyles>;
 
   return (
     <div className='style-editor'>
-      <h4>Customize Widget Styles</h4>
-      {editableStyleKeys.map((key) => {
+      <h4>Customize Widget Appearance</h4>
+
+      {/* Widget Title Editor */}
+      <div className='form-group flex flex-row flex-wrap'>
+        <label htmlFor='widgetTitle'>{createLabel('widgetTitle')}</label>
+        <input
+          type='text'
+          id='widgetTitle'
+          name='widgetTitle'
+          value={styles.widgetTitle}
+          onChange={(e) => handleInputChange('widgetTitle', e.target.value)}
+        />
+      </div>
+
+      {editableColorStyleKeys.map((key) => {
         const value = styles[key];
-        // Determine input type based on value (simple check for hex color)
-        // More robust checking might be needed for different types of style values
-        const isColor = typeof value === 'string' && value.startsWith('#');
+        // All remaining ones should be colors for now
+        const isColor = true; // Simplified as we filtered non-colors
 
         return (
           <div key={key} className='form-group flex flex-row flex-wrap'>
             <label htmlFor={key}>{createLabel(key)}</label>
             <input
-              type={isColor ? 'color' : 'text'}
+              type={isColor ? 'color' : 'text'} // Kept for future non-color styles
               id={key}
               name={key}
               value={value}
-              onChange={(e) => handleColorChange(key, e.target.value)}
+              onChange={(e) => handleInputChange(key, e.target.value)}
             />
           </div>
         );

@@ -16,7 +16,11 @@ const GearIcon = () => (
   </svg>
 );
 
-export function Widget() {
+interface WidgetProps {
+  widgetTitle: string;
+}
+
+export function Widget({ widgetTitle }: WidgetProps) {
   const { isOpen, setIsOpen, setIsEditModalOpen } = useContext(WidgetContext);
 
   if (!isOpen) {
@@ -30,7 +34,7 @@ export function Widget() {
   return (
     <div className='widget-container'>
       <div className='widget-header'>
-        <h3>Widget Title</h3>
+        <h3>{widgetTitle}</h3>
         <div>
           <button
             onClick={() => setIsEditModalOpen(true)}

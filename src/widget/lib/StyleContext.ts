@@ -17,6 +17,7 @@ export interface ChatbotStyles {
   buttonTextColor: string;
   scrollbarThumbColor: string;
   scrollbarTrackColor: string;
+  widgetTitle: string;
   // Add more properties as needed
 }
 
@@ -37,6 +38,7 @@ export const defaultChatbotStyles: ChatbotStyles = {
   buttonTextColor: '#ffffff',
   scrollbarThumbColor: '#007bff',
   scrollbarTrackColor: '#f0f0f0',
+  widgetTitle: 'Chat with us!',
 };
 
 interface StyleContextType {
