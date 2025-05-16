@@ -1,15 +1,372 @@
+/* Define CSS Variables for customizable properties */
+:root {
+  --widget-font-family: 'Arial', sans-serif;
+  --widget-primary-color: #007bff;
+  --widget-primary-text-color: white;
+  --widget-secondary-color: #0056b3; /* For hover states or secondary actions */
+
+  --widget-background-color: white;
+  --widget-border-color: #eaeaea;
+  --widget-shadow-color: rgba(0, 0, 0, 0.15);
+
+  --header-background-color: #f7f7f7;
+  --header-text-color: #333;
+  --header-icon-color: #007bff;
+  --header-border-color: #eaeaea;
+
+  --chat-background-color: white;
+  --chat-text-color: #333;
+
+  --user-message-background-color: var(--widget-primary-color);
+  --user-message-text-color: var(--widget-primary-text-color);
+
+  --bot-message-background-color: #f0f0f0;
+  --bot-message-text-color: #333;
+  --bot-typing-indicator-bg-color: #e9e9eb;
+  --bot-typing-indicator-text-color: #666;
+
+  --input-background-color: white;
+  --input-text-color: #333;
+  --input-border-color: #ccc;
+  --input-focus-border-color: var(--widget-primary-color);
+  --input-placeholder-color: #999;
+
+  --button-background-color: var(--widget-primary-color);
+  --button-text-color: var(--widget-primary-text-color);
+  --button-hover-background-color: var(--widget-secondary-color);
+
+  --scrollbar-thumb-color: var(--widget-primary-color);
+  --scrollbar-track-color: #f0f0f0;
+  --widget-primary-color-rgb: 0, 123, 255; /* Default, update if primary color changes */
+}
+
+body {
+  font-family: var(--widget-font-family);
+}
+
+/* Removed Tailwind @apply for .widget-container, .widget-button, .widget-header, .widget-content */
+/* These are now styled using CSS variables below */
+
 .widget-container {
-    @apply fixed bottom-5 right-5 w-[300px] h-[400px] bg-white border border-gray-200 rounded-lg shadow-lg z-[9999];
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;
+  max-height: 80vh;
+  background-color: var(--widget-background-color);
+  border: 1px solid var(--widget-border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--widget-shadow-color);
+  display: flex;
+  flex-direction: column;
+  font-family: var(--widget-font-family);
+  overflow: hidden;
 }
 
 .widget-button {
-    @apply fixed bottom-5 right-5 px-6 py-3 bg-indigo-600 text-white border-none rounded-lg cursor-pointer z-[9999];
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px var(--widget-shadow-color);
+  font-family: var(--widget-font-family);
+}
+
+.widget-button:hover {
+  background-color: var(--button-hover-background-color);
 }
 
 .widget-header {
-    @apply p-3 border-b border-gray-200 flex justify-between items-center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: var(--header-background-color);
+  color: var(--header-text-color);
+  border-bottom: 1px solid var(--header-border-color);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.widget-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.widget-header button {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--header-icon-color);
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+}
+
+.widget-header button:hover {
+  opacity: 0.7;
 }
 
 .widget-content {
-    @apply p-4;
+  padding: 0;
+  overflow-y: auto;
+  flex-grow: 1;
+  background-color: var(--chat-background-color);
+  color: var(--chat-text-color);
+}
+
+/* ChatView specific styles */
+.chat-view {
+  display: flex;
+  flex-direction: column;
+  height: 300px; /* Example height, adjust as needed */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.messages-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  padding: 8px 12px;
+  border-radius: 18px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.message.user {
+  background-color: #007bff;
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.message.bot {
+  background-color: #f0f0f0;
+  color: #333;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.message.bot.typing-indicator {
+  background-color: #e9e9eb; /* Slightly different background for typing indicator */
+  color: #666;
+  font-style: italic;
+}
+
+/* Ensure other .message.bot styles don't conflict too much if not specific enough */
+.message.bot {
+  background-color: #f0f0f0;
+  color: #333;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.input-container {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+.input-container input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+
+.input-container button {
+  padding: 8px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.input-container button:hover {
+  background-color: #0056b3;
+}
+
+/* Modern Scrollbar Styles */
+.messages-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color);
+  border-radius: 10px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+  border-radius: 10px;
+  border: 2px solid var(--scrollbar-track-color);
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--widget-secondary-color);
+}
+
+.message {
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 75%;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.message.user {
+  background-color: var(--user-message-background-color);
+  color: var(--user-message-text-color);
+  align-self: flex-end;
+  border-bottom-right-radius: 6px;
+}
+
+.message.bot {
+  background-color: var(--bot-message-background-color);
+  color: var(--bot-message-text-color);
+  align-self: flex-start;
+  border-bottom-left-radius: 6px;
+}
+
+.message.bot.typing-indicator {
+  background-color: var(--bot-typing-indicator-bg-color);
+  color: var(--bot-typing-indicator-text-color);
+  font-style: italic;
+  padding: 8px 12px;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-top: 1px solid var(--widget-border-color);
+  background-color: var(--input-background-color);
+}
+
+.input-container input {
+  flex-grow: 1;
+  padding: 12px 15px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 20px;
+  margin-right: 10px;
+  font-size: 0.95rem;
+  color: var(--input-text-color);
+  background-color: var(--input-background-color);
+  outline: none;
+  transition:
+    border-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+}
+
+.input-container input::placeholder {
+  color: var(--input-placeholder-color);
+  opacity: 0.8;
+}
+
+.input-container input:focus {
+  border-color: var(--input-focus-border-color);
+  box-shadow: 0 0 0 2px rgba(var(--widget-primary-color-rgb, 0, 123, 255), 0.25);
+}
+
+.input-container button {
+  padding: 10px 18px;
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.input-container button:hover {
+  background-color: var(--button-hover-background-color);
+}
+
+.input-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Modal Styles */
+.edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.edit-modal-content {
+  background-color: var(--widget-background-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  gap: 20px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.style-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 250px;
+}
+
+.style-editor .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.style-editor label {
+  font-size: 0.9rem;
+  color: var(--header-text-color);
+  font-weight: 500;
+}
+
+.style-editor input[type='color'],
+.style-editor input[type='text'] {
+  padding: 8px;
+  border: 1px solid var(--input-border-color);
+  border-radius: 4px;
+  width: 100%;
+}
+
+.style-editor input[type='color'] {
+  height: 40px;
+}
+
+/* Ensure the widget inside the modal is not fixed position */
+.edit-modal-content .widget-container {
+  position: relative;
+  bottom: auto;
+  right: auto;
+  width: 350px;
+  height: 500px;
+  box-shadow: none;
 }
