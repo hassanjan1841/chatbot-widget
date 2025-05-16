@@ -51,8 +51,9 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 350px;
-  max-height: 80vh;
+  width: 350px; /* Initial width */
+  height: 500px; /* Initial height */
+  max-height: 90vh; /* Previous max-height, can be adjusted */
   background-color: var(--widget-background-color);
   border: 1px solid var(--widget-border-color);
   border-radius: 8px;
@@ -60,7 +61,15 @@ body {
   display: flex;
   flex-direction: column;
   font-family: var(--widget-font-family);
-  overflow: hidden;
+  overflow: hidden; /* Important for resize to work well with border-radius */
+
+  /* Resizable properties */
+  resize: both; /* Allows resizing horizontally and vertically */
+  min-width: 300px; /* Minimum dimensions */
+  min-height: 400px;
+  /* Optionally, set max-width and max-height if different from viewport-based ones */
+  /* max-width: 700px; */
+  /* max-height: 80vh; */
 }
 
 .widget-button {
@@ -125,9 +134,11 @@ body {
 .chat-view {
   display: flex;
   flex-direction: column;
-  height: 300px; /* Example height, adjust as needed */
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  /* height: 300px; Remove fixed height */
+  flex-grow: 1; /* Allow chat-view to grow and fill available space in .widget-content */
+  height: 100%; /* Ensure it tries to take full height of its parent .widget-content */
+  background-color: var(--chat-background-color);
+  overflow: hidden; /* Prevent internal content from breaking layout during resize */
 }
 
 .messages-container {
@@ -361,12 +372,14 @@ body {
   height: 40px;
 }
 
-/* Ensure the widget inside the modal is not fixed position */
+/* Ensure the widget inside the modal is not fixed position and NOT resizable (usually) */
 .edit-modal-content .widget-container {
-  position: relative;
+  position: relative; /* Override fixed positioning */
   bottom: auto;
   right: auto;
-  width: 350px;
-  height: 500px;
-  box-shadow: none;
+  width: 350px; /* Keep consistent width for preview */
+  height: 500px; /* Fixed height for preview */
+  box-shadow: none; /* Remove shadow as modal has its own */
+  resize: none; /* Disable resizing for the preview widget in the modal */
+  overflow: hidden; /* Keep this consistent */
 }
