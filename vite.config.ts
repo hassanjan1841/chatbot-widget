@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     // Output directory for the built widget files
-    outDir: 'dist-widget', // You can choose any folder name
+    outDir: 'dist', // You can choose any folder name
     lib: {
       // Entry point for your widget loader
       entry: path.resolve(__dirname, 'src/widget-loader.tsx'),
