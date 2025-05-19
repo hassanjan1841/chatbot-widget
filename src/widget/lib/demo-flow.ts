@@ -12,8 +12,14 @@ export interface FlowNode {
     | 'greeting'
     | 'question_with_options'
     | 'information_only'
+    | 'capture_name'
+    | 'capture_email'
+    | 'capture_phone'
+    | 'confirm_lead_data'
     | 'end_conversation';
   options?: FlowOption[]; // Available options if it's a 'question_with_options' type
+  validation?: 'email' | 'phone_with_country_code'; // Optional validation type
+  nextOnInputNodeId?: string; // For capture types, node to go to after successful input
 }
 
 export interface ConversationFlow {
@@ -23,12 +29,19 @@ export interface ConversationFlow {
 
 // Sample Demo Conversation Flow
 export const demoConversationFlow: ConversationFlow = {
-  startNodeId: 'greetingNode',
+  startNodeId: 'leadCaptureGreeting',
   nodes: {
+    leadCaptureGreeting: {
+      id: 'leadCaptureGreeting',
+      botMessage:
+        "Hello! I'm here to help. To get started, could I please get your full name?",
+      nodeType: 'capture_name',
+      nextOnInputNodeId: 'leadCaptureEmail',
+    },
     greetingNode: {
       id: 'greetingNode',
       botMessage:
-        'Hello! Welcome to our demo service. How can we assist you today?',
+        'Thanks for providing your details! How can I assist you further today?',
       nodeType: 'question_with_options',
       options: [
         {
@@ -139,6 +152,128 @@ export const demoConversationFlow: ConversationFlow = {
       id: 'endNodeThankYou',
       botMessage: "You're welcome! Have a great day!",
       nodeType: 'end_conversation',
+    },
+    leadCaptureName: {
+      id: 'leadCaptureName',
+      botMessage: 'Great! To get started, could I please get your full name?',
+      nodeType: 'capture_name',
+      nextOnInputNodeId: 'leadCaptureEmail',
+    },
+    leadCaptureEmail: {
+      id: 'leadCaptureEmail',
+      botMessage: 'Thanks, {name}! What is your email address?',
+      nodeType: 'capture_email',
+      validation: 'email',
+      nextOnInputNodeId: 'leadCapturePhone',
+    },
+    leadCapturePhone: {
+      id: 'leadCapturePhone',
+      botMessage:
+        "Got it! And lastly, what's your phone number? Please include your country code (e.g., +1 555-123-4567).",
+      nodeType: 'capture_phone',
+      validation: 'phone_with_country_code',
+      nextOnInputNodeId: 'leadCaptureConfirm',
+    },
+    leadCaptureConfirm: {
+      id: 'leadCaptureConfirm',
+      botMessage:
+        'Perfect! Just to confirm your details:\nName: {name}\nEmail: {email}\nPhone: {phone}\nIs this correct?',
+      nodeType: 'confirm_lead_data',
+      options: [
+        {
+          id: 'confirm_yes',
+          text: "Yes, that's correct",
+          nextNodeId: 'leadCaptureComplete',
+        },
+        {
+          id: 'confirm_edit_name',
+          text: 'Edit Name',
+          nextNodeId: 'leadCaptureName',
+        },
+        {
+          id: 'confirm_edit_email',
+          text: 'Edit Email',
+          nextNodeId: 'leadCaptureEmail',
+        },
+        {
+          id: 'confirm_edit_phone',
+          text: 'Edit Phone',
+          nextNodeId: 'leadCapturePhone',
+        },
+        {
+          id: 'confirm_start_over',
+          text: 'Start Over',
+          nextNodeId: 'leadCaptureGreeting',
+        },
+      ],
+    },
+    leadCaptureComplete: {
+      id: 'leadCaptureComplete',
+      botMessage:
+        "Excellent! We've received your details. Now, how can we help you?",
+      nodeType: 'question_with_options',
+      options: [
+        {
+          id: 'final_opt_services',
+          text: 'Tell me about your services',
+          nextNodeId: 'servicesNode',
+        },
+        {
+          id: 'final_opt_pricing',
+          text: 'Show me pricing',
+          nextNodeId: 'pricingNode',
+        },
+        {
+          id: 'final_opt_contact',
+          text: 'How to contact us?',
+          nextNodeId: 'contactNode',
+        },
+        {
+          id: 'final_opt_end_chat',
+          text: "That\'s all, thanks!",
+          nextNodeId: 'endNodeThankYou',
+        },
+      ],
+    },
+    invalidEmailNode: {
+      id: 'invalidEmailNode',
+      botMessage:
+        "Hmm, that email address doesn't look quite right. Could you please enter a valid email?",
+      nodeType: 'capture_email',
+      validation: 'email',
+      nextOnInputNodeId: 'leadCapturePhone',
+      options: [
+        {
+          id: 'skip_email',
+          text: 'Skip Email',
+          nextNodeId: 'leadCapturePhone',
+        },
+        {
+          id: 'back_to_name_from_email',
+          text: 'Go Back to Name',
+          nextNodeId: 'leadCaptureName',
+        },
+      ],
+    },
+    invalidPhoneNode: {
+      id: 'invalidPhoneNode',
+      botMessage:
+        "Please ensure your phone number starts with a '+' followed by your country code and number (e.g., +1 555-123-4567).",
+      nodeType: 'capture_phone',
+      validation: 'phone_with_country_code',
+      nextOnInputNodeId: 'leadCaptureConfirm',
+      options: [
+        {
+          id: 'skip_phone',
+          text: 'Skip Phone',
+          nextNodeId: 'leadCaptureConfirm',
+        },
+        {
+          id: 'back_to_email_from_phone',
+          text: 'Go Back to Email',
+          nextNodeId: 'leadCaptureEmail',
+        },
+      ],
     },
   },
 };
