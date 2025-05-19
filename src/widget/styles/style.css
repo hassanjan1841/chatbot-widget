@@ -44,16 +44,13 @@ body {
   font-family: var(--widget-font-family);
 }
 
-/* Removed Tailwind @apply for .widget-container, .widget-button, .widget-header, .widget-content */
-/* These are now styled using CSS variables below */
-
 .widget-container {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 380px; /* Initial width */
-  height: 500px; /* Initial height */
-  max-height: 90vh; /* Previous max-height, can be adjusted */
+  width: 380px;
+  height: 500px;
+  max-height: 90vh;
   background-color: var(--widget-background-color);
   border: 1px solid var(--widget-border-color);
   border-radius: 8px;
@@ -61,15 +58,11 @@ body {
   display: flex;
   flex-direction: column;
   font-family: var(--widget-font-family);
-  overflow: hidden; /* Important for resize to work well with border-radius */
+  overflow: hidden;
 
-  /* Resizable properties */
-  resize: both; /* Allows resizing horizontally and vertically */
-  min-width: 300px; /* Minimum dimensions */
+  resize: both;
+  min-width: 300px;
   min-height: 400px;
-  /* Optionally, set max-width and max-height if different from viewport-based ones */
-  /* max-width: 700px; */
-  /* max-height: 80vh; */
 }
 
 .widget-button {
@@ -354,6 +347,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+
   z-index: 1000; /* Ensure it's on top */
 }
 
@@ -363,12 +357,19 @@ body {
   border-radius: 10px; /* Softer edges */
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25); /* More pronounced shadow */
   width: 80vw; /* Responsive width */
-  max-width: 1000px; /* Max width */
+  max-width: 800px; /* Max width */
   height: 80vh; /* Responsive height */
   max-height: 700px; /* Max height */
   display: flex;
+  flex-direction: row;
   gap: 20px; /* Gap between editor and preview */
   overflow: hidden; /* Prevent content spill */
+}
+
+@media screen and (max-width: 768px) {
+  .edit-modal-content {
+    flex-direction: column;
+  }
 }
 
 .style-editor-wrapper {
@@ -376,9 +377,11 @@ body {
   padding-right: 20px; /* Spacing from preview */
   border-right: 1px solid var(--widget-border-color, #eee); /* Separator line */
   overflow-y: auto; /* Scroll if content overflows */
-
   display: flex;
   flex-direction: column;
+  min-width: 280px;
+  max-width: 380px;
+  min-height: 280px;
 }
 /* Modern Scrollbar Styles */
 .style-editor-wrapper::-webkit-scrollbar {
@@ -401,22 +404,35 @@ body {
 }
 
 .widget-preview-wrapper {
-  flex: 1; /* Takes up the other half */
+  min-width: 280px;
   display: flex;
   flex-direction: column;
   align-items: center; /* Center preview horizontally */
   justify-content: center; /* Center preview vertically */
   position: relative; /* For positioning the preview widget if needed */
-  overflow: hidden; /* Important for preview scaling or fixed size */
+  overflow-y: auto; /* Important for preview scaling or fixed size */
+}
+.widget-preview-wrapper::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* Ensure the preview widget itself doesn't break out of its container */
+.widget-preview-wrapper::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color);
+  border-radius: 10px;
+}
+
+.widget-preview-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+  border-radius: 10px;
+  border: 2px solid var(--scrollbar-track-color);
+}
+
 .widget-preview-wrapper .widget-container {
-  /* Styles for the preview widget if it's the '.widget-container' class */
   position: relative; /* Reset fixed positioning */
   bottom: auto;
   right: auto;
   width: 100%; /* Make it fit the preview wrapper */
+  min-width: 280px;
   max-width: 380px; /* Or a specific max width for preview */
   height: 100%;
   max-height: 500px; /* Or a specific max height for preview */
@@ -427,17 +443,17 @@ body {
   transform-origin: center center;
 }
 
-/* Preview specific adjustments if .preview-widget-container is used */
 .preview-widget-container {
   position: relative !important; /* Override fixed if it was there */
   bottom: unset !important;
   right: unset !important;
   width: 100%;
   max-width: 380px;
-  height: 95%; /* Fit better in the preview area */
+  height: 60%; /* Fit better in the preview area */
   max-height: 500px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin: 0;
+  overflow-y: auto;
 }
 
 .style-editor {
