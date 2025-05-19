@@ -8,7 +8,7 @@
   --widget-background-color: white;
   --widget-border-color: #eaeaea;
   --widget-shadow-color: rgba(0, 0, 0, 0.15);
-
+  --widget-close-button-color: #007bff;
   --header-background-color: #f7f7f7;
   --header-text-color: #333;
   --header-icon-color: #007bff;
@@ -112,7 +112,7 @@ body {
   background: none;
   border: none;
   font-size: 1.3rem;
-  color: var(--header-icon-color);
+  color: var(--widget-close-button-color);
   cursor: pointer;
   padding: 5px;
   line-height: 1;
@@ -258,7 +258,35 @@ body {
   background-color: var(--bot-typing-indicator-bg-color);
   color: var(--bot-typing-indicator-text-color);
   font-style: italic;
-  padding: 8px 12px;
+}
+
+/* Styles for message options/buttons */
+.message-options {
+  display: flex;
+  flex-wrap: wrap; /* Allow buttons to wrap to the next line if they don't fit */
+  gap: 8px; /* Spacing between buttons */
+  margin-top: 8px; /* Spacing above the button group */
+  /* align-self: flex-start; Already handled by .message.bot if these are part of bot messages */
+}
+
+.message-options button {
+  background-color: var(
+    --widget-primary-color
+  ); /* Use primary color for buttons */
+  color: var(--widget-primary-text-color);
+  border: 1px solid var(--widget-primary-color); /* Subtle border */
+  border-radius: 15px; /* Pill-shaped buttons */
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.message-options button:hover {
+  background-color: var(--widget-secondary-color);
+  color: var(--widget-primary-text-color);
 }
 
 .input-container {
@@ -320,25 +348,96 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 1000;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top */
 }
 
 .edit-modal-content {
-  background-color: var(--widget-background-color);
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: var(--widget-background-color, white);
+  padding: 25px; /* Increased padding */
+  border-radius: 10px; /* Softer edges */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25); /* More pronounced shadow */
+  width: 80vw; /* Responsive width */
+  max-width: 1000px; /* Max width */
+  height: 80vh; /* Responsive height */
+  max-height: 700px; /* Max height */
   display: flex;
-  gap: 20px;
-  max-width: 90vw;
-  max-height: 90vh;
-  overflow-y: auto;
+  gap: 20px; /* Gap between editor and preview */
+  overflow: hidden; /* Prevent content spill */
+}
+
+.style-editor-wrapper {
+  flex: 1; /* Takes up half the space */
+  padding-right: 20px; /* Spacing from preview */
+  border-right: 1px solid var(--widget-border-color, #eee); /* Separator line */
+  overflow-y: auto; /* Scroll if content overflows */
+
+  display: flex;
+  flex-direction: column;
+}
+/* Modern Scrollbar Styles */
+.style-editor-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.style-editor-wrapper::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color);
+  border-radius: 10px;
+}
+
+.style-editor-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-color);
+  border-radius: 10px;
+  border: 2px solid var(--scrollbar-track-color);
+}
+
+.style-editor-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: var(--widget-secondary-color);
+}
+
+.widget-preview-wrapper {
+  flex: 1; /* Takes up the other half */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center preview horizontally */
+  justify-content: center; /* Center preview vertically */
+  position: relative; /* For positioning the preview widget if needed */
+  overflow: hidden; /* Important for preview scaling or fixed size */
+}
+
+/* Ensure the preview widget itself doesn't break out of its container */
+.widget-preview-wrapper .widget-container {
+  /* Styles for the preview widget if it's the '.widget-container' class */
+  position: relative; /* Reset fixed positioning */
+  bottom: auto;
+  right: auto;
+  width: 100%; /* Make it fit the preview wrapper */
+  max-width: 380px; /* Or a specific max width for preview */
+  height: 100%;
+  max-height: 500px; /* Or a specific max height for preview */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Lighter shadow for preview */
+  border: 1px solid var(--widget-border-color, #ddd);
+  margin: 0; /* Remove any margin it might have */
+  transform: scale(0.95); /* Slightly scale down for better fit, optional */
+  transform-origin: center center;
+}
+
+/* Preview specific adjustments if .preview-widget-container is used */
+.preview-widget-container {
+  position: relative !important; /* Override fixed if it was there */
+  bottom: unset !important;
+  right: unset !important;
+  width: 100%;
+  max-width: 380px;
+  height: 95%; /* Fit better in the preview area */
+  max-height: 500px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 0;
 }
 
 .style-editor {
@@ -349,32 +448,136 @@ body {
 }
 
 .style-editor .form-group {
+  margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+}
+.style-editor .form-group label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.9rem;
 }
 
 .style-editor label {
-  font-size: 0.9rem;
-  color: var(--header-text-color);
+  margin-bottom: 6px;
   font-weight: 500;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.style-editor .input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .style-editor input[type='color'],
-.style-editor input[type='text'] {
-  padding: 8px;
-  border: 1px solid var(--input-border-color);
-  border-radius: 4px;
+.style-editor input[type='text'],
+.style-editor input[type='number'],
+.style-editor select {
+  padding: 10px;
+  border: 1px solid var(--input-border-color, #ccc);
+  border-radius: 5px;
+  font-size: 0.95rem;
   width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.style-editor input[type='text']:focus,
+.style-editor input[type='number']:focus,
+.style-editor select:focus {
+  border-color: var(--input-focus-border-color, #007bff);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--widget-primary-color-rgb, 0, 123, 255), 0.25);
 }
 
 .style-editor input[type='color'] {
-  height: 40px;
+  padding: 0; /* Remove padding for color input itself */
+  height: 40px; /* Match other input height */
+  width: 60px; /* Fixed width for color picker */
+  min-width: 60px;
+  border: 1px solid var(--input-border-color, #ccc);
+  border-radius: 5px;
+  cursor: pointer;
+  -webkit-appearance: none; /* Remove default appearance */
+  -moz-appearance: none;
+  appearance: none;
+  background-color: transparent; /* Ensure native picker UI is not obscured */
 }
 
-/* Ensure the widget inside the modal is not fixed position and NOT resizable (usually) */
+/* Actual color preview box, distinct from the input[type=color]'s clickable area */
+.style-editor .color-preview-box {
+  width: 28px; /* Smaller than input[type=color] clickable area */
+  height: 28px;
+  border: 1px solid var(--input-border-color, #ccc);
+  border-radius: 4px;
+  /* Background color will be set inline via style prop */
+}
+
+/* Custom styling for input[type="color"]::-webkit-color-swatch-wrapper and ::-webkit-color-swatch */
+/* This makes the clickable area of input[type=color] cleaner */
+.style-editor input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 0;
+  border-radius: 4px;
+}
+
+.style-editor input[type='color']::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+/* Firefox specific for color input */
+.style-editor input[type='color']::-moz-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+.style-editor input[type='color']::-moz-focus-inner {
+  /* Remove dotted outline on focus in Firefox */
+  border: 0;
+  padding: 0;
+}
+
+.style-editor .reset-button {
+  background-color: #188aee;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-align: center;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.style-editor .reset-button:hover {
+  background-color: var(--widget-primary-color, #ffffff); /* Darken on hover */
+}
+
+/* Style editor title */
+.style-editor h4 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--widget-border-color);
+}
+.widget-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.close-preview-button {
+  color: var(--widget-primary-color);
+}
+
 .edit-modal-content .widget-container {
-  position: relative; /* Override fixed positioning */
+  /* Ensure this does not conflict with .preview-widget-container if both are somehow applied */
+  /* Generally, prefer .preview-widget-container for the preview specific styles */
+  position: relative; /* reset fixed */
   bottom: auto;
   right: auto;
   width: 350px; /* Keep consistent width for preview */

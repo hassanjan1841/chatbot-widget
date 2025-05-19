@@ -1,23 +1,14 @@
-// import React, { useState, useContext, useEffect, useCallback } from 'react'; // React might not be needed if using new JSX transform
-import { useState, useEffect, useCallback } from 'react'; // Removed unused useContext
-// We will temporarily comment out getBotResponse as we are using a local demo flow
-// import { getBotResponse } from '../services/api';
-import { demoConversationFlow, FlowNode, FlowOption } from '../lib/demo-flow'; // Corrected path
-// import { WidgetContext, WidgetContextType } from '../lib/context'; // WidgetContext not used directly in ChatView
-// import { StyleContext } from '../lib/StyleContext'; // Corrected path, still commented out
+import { useState, useEffect, useCallback } from 'react';
+import { demoConversationFlow, FlowNode, FlowOption } from '../lib/demo-flow';
 
 interface Message {
   id: string;
   text: string;
   sender: 'user' | 'bot';
-  options?: FlowOption[]; // For rendering options as part of a bot message
+  options?: FlowOption[];
 }
 
 const ChatView: React.FC = () => {
-  // const { setIsOpen } = useContext(WidgetContext) as WidgetContextType; // setIsOpen is unused in ChatView
-  // const { clientKey } = useContext(WidgetContext); // clientKey from WidgetContext is not used in the demo flow
-  // const { styles } = useContext(StyleContext); // ChatView relies on CSS variables set by WidgetContainer from StyleContext, so direct access to styles object is not needed here.
-
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +19,7 @@ const ChatView: React.FC = () => {
   const addMessage = useCallback(
     (text: string, sender: 'user' | 'bot', options?: FlowOption[]) => {
       const newMessage: Message = {
-        id: Date.now().toString() + Math.random().toString(), // Ensure more unique ID
+        id: Date.now().toString() + Math.random().toString(),
         text,
         sender,
         options,
@@ -38,19 +29,15 @@ const ChatView: React.FC = () => {
     [],
   );
 
-  // Function to process and add bot messages (can be single or multiple)
   const addBotMessages = useCallback(
     (node: FlowNode) => {
       setIsLoading(true);
-      // Simulate bot thinking time
       setTimeout(() => {
         if (Array.isArray(node.botMessage)) {
           node.botMessage.forEach((msg: string, index: number) => {
-            // Added types for msg and index
-            // Add options only to the last message in a sequence
             const msgOptions =
               index === node.botMessage.length - 1 &&
-              node.options && // Display options if they exist
+              node.options &&
               node.options.length > 0
                 ? node.options
                 : undefined;
@@ -60,18 +47,15 @@ const ChatView: React.FC = () => {
           addMessage(
             node.botMessage,
             'bot',
-            node.options && node.options.length > 0 // Display options if they exist
-              ? node.options
-              : undefined,
+            node.options && node.options.length > 0 ? node.options : undefined,
           );
         }
         setIsLoading(false);
-      }, 500); // Shorter delay for local flow
+      }, 500);
     },
     [addMessage],
   );
 
-  // Effect to display the first message(s) from the flow when component mounts or flow changes
   useEffect(() => {
     const initialNode =
       demoConversationFlow.nodes[demoConversationFlow.startNodeId];
@@ -79,27 +63,22 @@ const ChatView: React.FC = () => {
       addBotMessages(initialNode);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addBotMessages]); // demoConversationFlow.startNodeId, demoConversationFlow.nodes are stable
+  }, [addBotMessages]);
 
   const handleOptionClick = useCallback(
     (option: FlowOption) => {
-      // Add user's choice to messages
       addMessage(option.text, 'user');
-      setMessages((prev) => prev.map((m) => ({ ...m, options: undefined }))); // Remove options from previous bot message
+      setMessages((prev) => prev.map((m) => ({ ...m, options: undefined })));
 
       if (option.directAnswer) {
-        const answerText = option.directAnswer; // Assign to a const
+        const answerText = option.directAnswer;
         setTimeout(() => addMessage(answerText, 'bot'), 300);
-        // After a direct answer, we might want to go to a generic node or end,
-        // for now, we can go back to main menu or an end node if specified
         const thankYouNode = Object.values(demoConversationFlow.nodes).find(
-          (n: any) => n.nodeType === 'end_conversation', // Typed n as any for now, ideally FlowNode
+          (n: any) => n.nodeType === 'end_conversation',
         );
         if (thankYouNode && answerText.includes('signup')) {
-          // Use the new const here
           setTimeout(() => addBotMessages(thankYouNode), 600);
         } else {
-          // Or present options to go back to main menu
           const mainMenuNode =
             demoConversationFlow.nodes[demoConversationFlow.startNodeId];
           if (mainMenuNode && mainMenuNode.options) {
@@ -127,40 +106,28 @@ const ChatView: React.FC = () => {
         }
       }
     },
-    [
-      addMessage,
-      // demoConversationFlow.nodes, // Considered stable
-      // demoConversationFlow.startNodeId, // Considered stable
-      addBotMessages, // Include addBotMessages as it's used inside
-      // setCurrentNodeId // Include if state updates based on it are critical for re-render, but usually not for useCallback itself
-    ],
+    [addMessage, addBotMessages],
   );
 
-  // Original handleSendMessage for text input - can be enhanced later or disabled for pure flow demo
   const handleSendMessage = async () => {
     if (inputValue.trim() === '') return;
-    const userMessageText = inputValue; // Store before clearing input
+    const userMessageText = inputValue;
     addMessage(userMessageText, 'user');
     setInputValue('');
 
-    setIsLoading(true); // For the "You said..." part and subsequent bot message
+    setIsLoading(true);
 
-    // First bot message: "You said..."
     setTimeout(() => {
       addMessage(
         `You said: "${userMessageText}". Please use the buttons to navigate the demo flow.`,
         'bot',
       );
 
-      // Second part: Re-show current node's prompt and options
-      // Ensure currentNodeId is not null before accessing nodes
       if (currentNodeId) {
         const currentNode = demoConversationFlow.nodes[currentNodeId];
         if (currentNode) {
-          // addBotMessages will handle its own isLoading state changes and delays
           addBotMessages(currentNode);
         } else {
-          // If no current node for some reason, ensure isLoading is reset
           setIsLoading(false);
           addMessage(
             `Error: Could not find current node with ID: ${currentNodeId}`,
@@ -171,7 +138,7 @@ const ChatView: React.FC = () => {
         setIsLoading(false);
         addMessage('Error: Current node ID is null.', 'bot');
       }
-    }, 500); // Delay for "You said..." message
+    }, 500);
   };
 
   return (
@@ -190,10 +157,10 @@ const ChatView: React.FC = () => {
                     style={{
                       margin: '5px',
                       padding: '8px 12px',
-                      border: '1px solid var(--widget-primary-color)', // Reverted to simple CSS var
+                      border: '1px solid var(--widget-primary-color)',
                       borderRadius: '15px',
                       background: 'white',
-                      color: 'var(--widget-primary-color)', // Reverted to simple CSS var
+                      color: 'var(--widget-primary-color)',
                       cursor: 'pointer',
                     }}
                   >
@@ -221,7 +188,7 @@ const ChatView: React.FC = () => {
             }
           }}
           placeholder='Type a message or use buttons...'
-          disabled={isLoading} // Can also be permanently disabled if only buttons drive the flow
+          disabled={isLoading}
         />
         <button onClick={handleSendMessage} disabled={isLoading}>
           {isLoading ? 'Sending...' : 'Send'}

@@ -2,6 +2,7 @@ import { createContext, Dispatch, SetStateAction } from 'react';
 
 export interface ChatbotStyles {
   widgetPrimaryColor: string;
+  widgetCloseButtonColor: string;
   widgetPrimaryTextColor: string;
   headerBackgroundColor: string;
   headerTextColor: string;
@@ -23,6 +24,7 @@ export interface ChatbotStyles {
 
 export const defaultChatbotStyles: ChatbotStyles = {
   widgetPrimaryColor: '#007bff',
+  widgetCloseButtonColor: '#007bff',
   widgetPrimaryTextColor: '#ffffff',
   headerBackgroundColor: '#f7f7f7',
   headerTextColor: '#333333',
