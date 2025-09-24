@@ -2,11 +2,11 @@
 export const extractName = (userInput: string): string => {
   const patterns = [
     // More specific patterns first
-    /^\s*(?:yes|yeah|yep|ok|okay|sure|alright|my name is|i am|i\'m|call me|it is|it\'s)\s*,?\s*(?:my name is|i am|i\'m|call me|it is|it\'s)?\s*([A-Za-z\'\-]+(?:\s+[A-Za-z\'\-]+)*)\s*\.?\s*$/i,
+    /^\s*(?:yes|yeah|yep|ok|okay|sure|alright|my name is|i am|i'm|call me|it is|it's)\s*,?\s*(?:my name is|i am|i'm|call me|it is|it's)?\s*([A-Za-z'-]+(?:\s+[A-Za-z'-]+)*)\s*\.?\s*$/i,
     // Simpler patterns for affirmation + name
-    /^\s*(?:yes|yeah|yep|ok|okay|sure|alright)\s*,?\s+([A-Za-z\'\-]+(?:\s+[A-Za-z\'\-]+)*)\s*\.?\s*$/i,
+    /^\s*(?:yes|yeah|yep|ok|okay|sure|alright)\s*,?\s+([A-Za-z'-]+(?:\s+[A-Za-z'-]+)*)\s*\.?\s*$/i,
     // Just the name introduction phrases
-    /^\s*(?:my name is|i am|i\'m|call me|it is|it\'s)\s+([A-Za-z\'\-]+(?:\s+[A-Za-z\'\-]+)*)\s*\.?\s*$/i,
+    /^\s*(?:my name is|i am|i'm|call me|it is|it's)\s+([A-Za-z'-]+(?:\s+[A-Za-z'-]+)*)\s*\.?\s*$/i,
   ];
 
   for (const pattern of patterns) {

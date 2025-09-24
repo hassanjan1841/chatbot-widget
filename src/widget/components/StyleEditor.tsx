@@ -5,7 +5,9 @@ import {
   defaultChatbotStyles,
 } from '../lib/StyleContext';
 
-interface StyleEditorProps {}
+interface StyleEditorProps {
+  [key: string]: never;
+}
 
 const createLabel = (key: string) => {
   return key
@@ -13,7 +15,7 @@ const createLabel = (key: string) => {
     .replace(/^./, (str) => str.toUpperCase());
 };
 
-export function StyleEditor({}: StyleEditorProps) {
+export function StyleEditor(_props: StyleEditorProps) {
   const { styles, updateStyle, resetStyles } = useContext(StyleContext);
   const handleInputChange = (key: keyof ChatbotStyles, value: string) => {
     updateStyle(key, value);

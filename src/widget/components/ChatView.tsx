@@ -109,7 +109,7 @@ const ChatView: React.FC = () => {
   }, [currentNodeId, leadData, addBotMessages]);
 
   const handleNodeTransition = useCallback(
-    (nodeId: string | undefined, _currentLeadDataForNextNode?: LeadData) => {
+    (nodeId: string | undefined) => {
       if (nodeId) {
         const nextNode = demoConversationFlow.nodes[nodeId];
         if (nextNode) {
@@ -208,7 +208,7 @@ const ChatView: React.FC = () => {
       let updatedLeadData = { ...leadData };
 
       switch (currentFlowNode.nodeType) {
-        case 'capture_name':
+        case 'capture_name': {
           const extractedName = extractName(userMessageText);
           updatedLeadData = { ...leadData, name: extractedName };
           setLeadData(updatedLeadData);
@@ -220,6 +220,7 @@ const ChatView: React.FC = () => {
           }
           handleNodeTransition(nextNodeIdToShow);
           break;
+        }
         case 'capture_email':
           if (validateEmail(userMessageText)) {
             updatedLeadData = { ...leadData, email: userMessageText };

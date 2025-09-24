@@ -230,7 +230,7 @@ export const demoConversationFlow: ConversationFlow = {
         },
         {
           id: 'final_opt_end_chat',
-          text: "That\'s all, thanks!",
+          text: "That's all, thanks!",
           nextNodeId: 'endNodeThankYou',
         },
       ],

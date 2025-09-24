@@ -50,7 +50,7 @@ function init(config: WidgetConfig): void {
 function destroy(targetElementId: string = DEFAULT_ELEMENT_ID): void {
   const targetElement = document.getElementById(targetElementId);
   if (targetElement) {
-    const root = (targetElement as any)._reactRootContainer; // Access internal React root
+    const root = (targetElement as { _reactRootContainer?: { unmount(): void } })._reactRootContainer;
     if (root && typeof root.unmount === 'function') {
       root.unmount();
     } else {

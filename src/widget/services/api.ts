@@ -21,7 +21,7 @@ export const getBotResponse = async (
     } else if (userMessage.toLowerCase().includes('help')) {
       botText = 'Sure, I can help. What do you need assistance with?';
     } else {
-      botText = `Thanks for your message about \"${userMessage}\". I am processing it.`;
+      botText = `Thanks for your message about "${userMessage}". I am processing it.`;
     }
   } else if (clientKey === 'another-key') {
     botText = 'Hello from another configuration!';
